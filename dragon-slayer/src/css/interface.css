@@ -1,0 +1,248 @@
+.interface-box
+{
+    background-color: rgba(0, 0, 0, 0.6);
+    border-image: url('../images/frame.png') 93 92 87 92 stretch stretch;
+    border-style: inset;
+    border-width: 60px;
+    color: white;
+}
+
+
+/************** INTERFACE DU JEU (CARTE, BARRE DE STATUT, ETC.) **************/
+
+.interface-game
+{
+    width: 760px;
+}
+
+
+/************** MENU DE DEMARRAGE **************/
+
+.interface-menu
+{
+    height: 480px;
+    margin: 0 auto;
+    width: 640px;
+}
+
+.interface-menu .remaining-points
+{
+    color: #FFDD00;
+}
+
+.interface-menu .start
+{
+    padding: 0.5em 1em;
+}
+
+.interface-menu fieldset
+{
+    border-width: 0;
+    padding: 0;
+}
+.interface-menu fieldset legend
+{
+    /* structure */
+    width: 100%;
+
+    /* presentation */
+    color: #FFA900;
+    font-size: 2em;
+    text-align: center;
+}
+
+.interface-menu ul
+{
+    /* structure */
+    margin-top: 2em;
+    padding-left: 0;
+
+    /* presentation */
+    list-style-type: none;
+}
+.interface-menu ul li
+{
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+}
+.interface-menu ul li:last-child
+{
+    /* structure */
+    margin-top: 2em;
+
+    /* presentation */
+    text-align: center;
+}
+.interface-menu ul li button
+{
+    /* structure */
+    display: inline-block;
+    padding: 0 0.5em;
+
+    /* presentation */
+    background-color: #FF6200;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 0 2px 0 black;
+    color: white;
+    font-weight: bold;
+    line-height: 1.5em;
+    outline: none;
+    text-decoration: none;
+    transition: background-color 0.33s, box-shadow 0.33s;
+    vertical-align: middle;
+}
+.interface-menu ul li button:hover
+{
+    background-color: #FFA900;
+    box-shadow: 0 0 4px #FFDD00;
+    color: white;
+}
+.interface-menu ul li button + button,
+.interface-menu ul li meter + button
+{
+    margin-left: 0.5em;
+}
+.interface-menu ul li input[type=text]
+{
+    /* structure */
+    padding: 0.25em;
+    width: 162px;
+
+    /* presentation */
+    background-color: whitesmoke;
+    border-style: none;
+    border-radius: 4px;
+    color: black;
+    transition: background-color 0.25s;
+}
+.interface-menu ul li input[type=text]:focus
+{
+    background-color: #FFAA70;
+    outline: none;
+}
+.interface-menu ul li label:not(.radio)
+{
+    /* structure */
+    display: inline-block;
+    width: 186px;
+
+    /* presentation */
+    text-align: right;
+}
+.interface-menu ul li meter
+{
+    -moz-appearance: none;
+    -webkit-appearance: none;
+
+    height: 24px;
+    vertical-align: bottom;
+}
+.interface-menu ul li meter::-webkit-meter-bar
+{
+    background: none;
+    background-color: whitesmoke;
+    border-radius: 4px;
+}
+.interface-menu ul li meter::-webkit-meter-optimum-value
+{
+    background: none;
+    background-color: #FF6200;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+}
+.interface-menu ul li p
+{
+    color: #FFA900;
+    text-align: center;
+}
+
+
+/************** PANNEAU DE MESSAGES **************/
+
+.interface-message-panel
+{
+    height: 685px; /* alignment with .interface-game */
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.interface-message-panel ul
+{
+    /* structure */
+    margin: -20px;
+    overflow: hidden;
+    padding-left: 0;
+    width: 280px; /* 240px + 2 * 20px negative margin */
+
+    /* presentation */
+    list-style-type: none;
+}
+.interface-message-panel ul li
+{
+    font-size: 0.80em;
+}
+.interface-message-panel ul li.message-important
+{
+    color: #D63800;
+}
+.interface-message-panel ul li.message-info
+{
+    color: #1FD682;
+}
+.interface-message-panel ul li.message-normal
+{
+    color: #FFA900;
+}
+
+
+/************** BARRE DE STATUT DU JEU **************/
+
+.interface-status-bar
+{
+    /* structure */
+    height: 64px;
+    margin-top: 16px;
+
+    /* presentation */
+    cursor: default;
+}
+.interface-status-bar td,
+.interface-status-bar th
+{
+    /* structure */
+    width: 160px;
+
+    /* presentation */
+    text-align: center;
+}
+.interface-status-bar td
+{
+    font-size: 0.85em;
+}
+.interface-status-bar th.disabled
+{
+    color: silver;
+    text-shadow: 0 0 6px silver;
+}
+.interface-status-bar th.dragon
+{
+    color: #D63800;
+    text-shadow: 0 0 6px #D63800;
+}
+.interface-status-bar th.player
+{
+    color: #1FD682;
+    text-shadow: 0 0 6px #1FD682;
+}
+
+
+/************** MEDIA QUERIES **************/
+
+@media screen and (max-width: 1024px)
+{
+    .interface-menu fieldset legend
+    {
+        font-size: 1.5em;
+    }
+}

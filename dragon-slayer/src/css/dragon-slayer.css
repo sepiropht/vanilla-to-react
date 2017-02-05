@@ -1,0 +1,134 @@
+/************** ANIMATIONS **************/
+
+@-webkit-keyframes fire
+{
+    0%   { color: #870100; }
+    20%  { color: #D63800; }
+    30%  { color: #FF6200; }
+    40%  { color: #FFA900; }
+    50%  { color: #FFDD00; }
+    60%  { color: #FFA900; }
+    70%  { color: #FF6200; }
+    80%  { color: #D63800; }
+    100% { color: #870100; }
+}
+
+@keyframes fire
+{
+    0%   { color: #870100; }
+    20%  { color: #D63800; }
+    30%  { color: #FF6200; }
+    40%  { color: #FFA900; }
+    50%  { color: #FFDD00; }
+    60%  { color: #FFA900; }
+    70%  { color: #FF6200; }
+    80%  { color: #D63800; }
+    100% { color: #870100; }
+}
+
+
+/************** ELEMENTS HTML **************/
+
+*
+{
+    box-sizing: border-box;
+}
+
+a
+{
+    color: inherit;
+    text-decoration: none;
+}
+
+body
+{
+    /* structure */
+    margin: 0 auto;
+    width: 95%;
+
+    /* presentation */
+    font-family: 'Open Sans', sans-serif;
+}
+
+canvas:hover
+{
+    cursor: default;
+}
+
+h1, legend
+{
+    font-family: 'Indie Flower', cursive;
+    letter-spacing: 0.1em;
+}
+
+h1
+{
+    /* structure */
+    height: 128px;
+    margin: 0;
+
+    /* presentation */
+    color: #FFA900;
+    cursor: default;
+    text-align: center;
+    text-shadow: 0 0 8px #870100;
+}
+h1 a
+{
+    font-size: 3rem;
+    line-height: 128px;
+    transition: font-size 0.4s;
+}
+h1 a:hover
+{
+    font-size: 3.25rem;
+}
+
+header
+{
+    height: 128px;
+}
+
+html
+{
+    /* structure */
+    height: 100%;
+    overflow-y: scroll;
+
+    /* presentation */
+    background: transparent url("../images/background.jpg") no-repeat fixed center center / cover;
+}
+
+main
+{
+    position: relative;
+}
+
+
+/************** CLASSES UTILITAIRES **************/
+
+.animate-fire
+{
+    -webkit-animation: fire 1s infinite;
+    animation: fire 1s infinite;
+}
+
+.hide
+{
+    display: none;
+}
+
+
+/************** MEDIA QUERIES **************/
+
+@media screen and (max-width: 1024px)
+{
+    h1 a
+    {
+        font-size: 2rem;
+    }
+    h1 a:hover
+    {
+        font-size: 2.25rem;
+    }
+}

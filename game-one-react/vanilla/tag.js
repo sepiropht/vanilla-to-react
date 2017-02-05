@@ -5,7 +5,6 @@ var fifteen = {
   isCompleted: function() { return !this.order.some(function(item, i) { return item > 0 && item-1 !== i; }); },
   go: function(move) {
     var index = this.hole + move;
-      debugger;
     if (!this.order[index]) return false;
     if (move == fifteen.Move.left || move == fifteen.Move.right)
      if (Math.floor(this.hole/5) !== Math.floor(index/5)) return false;
