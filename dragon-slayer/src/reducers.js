@@ -30,6 +30,7 @@ function player(
         points: state.points - 1,
       });
     case DECREASE:
+      if (state.agility === 0 || state.strength === 0) return state;
       return Object.assign({}, state, {
         [action.payload]: state[action.payload] >= 1
           ? state[action.payload] - 1
