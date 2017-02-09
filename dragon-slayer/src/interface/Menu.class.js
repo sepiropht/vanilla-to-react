@@ -1,113 +1,157 @@
-'use strict';
+import { hashHistory } from 'react-router';
+import React from 'react';
+import {
+  startGame,
+  pseudoChange,
+  increase,
+  decrease,
+  radioChange,
+} from '../action';
+import { connect } from 'react-redux';
 
-
-////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-
-var Menu = function()
-{
-    // Recherche de l'objet jQuery représentant le menu de démarrage du jeu.
-    this.$menu = $('#interface-menu');
-
-    // Initalisation des autres propriétés de la classe.
-    this.remainingPoints = 3;       // Le joueur peut répartir 3 points au départ
-
-
-    /*
-     * Installation des gestionnaires d'évènements du menu.
-     *
-     * .bind(this) permet de faire en sorte que la variable JavaScript this
-     * fonctionne correctement dans les gestionnaires d'évènements.
-     */
-
-    // Gestion du clic sur les boutons de mise à jour des jauges du menu.
-    this.$menu.find('.meter-control').on('click', this.onClickMeterButton.bind(this));
-
-    // Gestion du clic sur le bouton démarrer du menu.
-    this.$menu.find('.start').on('click', this.onClickStartButton.bind(this));
+const mapDispatchToProps = {
+  startGame: startGame,
+  pseudoChange: pseudoChange,
+  decrease: decrease,
+  increase: increase,
+  radioChange: radioChange,
 };
 
-Menu.prototype.refresh = function()
-{
-    // Mise à jour de l'affichage du nombre de points restants à répartir.
-    this.$menu.find('.remaining-points').text(this.remainingPoints);
-};
+const mapStateToProps = state => ({ player: state });
 
-
-
-////////////////////// GESTIONNAIRES D'EVENEMENTS DE LA CLASSE //////////////////////
-
-Menu.prototype.onClickMeterButton = function(event)
-{
-    var $button;
-    var meter;
-
-    // Récupération de l'objet jQuery du bouton qui a déclenché l'évènement.
-    $button = $(event.currentTarget);
-
-    /*
-     * Récupération de l'objet DOM de la jauge reliée au bouton.
-     *
-     * On utilise l'objet DOM natif et pas jQuery car on a besoin de tester
-     * plusieurs attributs HTML de la balise <meter> que jQuery ne supporte pas
-     * directement (à part en utilisant la méthode .attr() ).
-     */
-    meter = document.getElementById($button.data('meter'));
-
-
-    // Est-ce qu'il s'agit d'un bouton pour diminuer ou augmenter la jauge ?
-    if($button.data('action') == 'decrease')
-    {
-        // Est-ce que la jauge peut encore diminuer ?
-        if(meter.value > meter.min)
-        {
-            // Oui, diminution de la jauge.
-            meter.value--;
-
-            // On peut désormais répartir un point supplémentaire.
-            this.remainingPoints++;
-        }
-    }
-    else // if(button.data('action') == 'increase')
-    {
-        // Est-ce qu'il y a encore des points à répartir ?
-        if(this.remainingPoints > 0)
-        {
-            // Oui, est-ce que la jauge peut encore augmenter ?
-            if(meter.value < meter.max)
-            {
-                // Oui, augmentation de la jauge.
-                meter.value++;
-
-                // On peut désormais répartir un point en moins.
-                this.remainingPoints--;
-            }
-        }
-    }
-
-
-    // Mise à jour de l'affichage.
-    this.refresh();
-
-    // Suppression du comportement par défaut des boutons (soumission du formulaire).
-    event.preventDefault();
-};
-
-Menu.prototype.onClickStartButton = function(event)
-{
-    var menuData;
-
-    // Création d'un objet avec toutes les valeurs du menu de démarrage (formulaire).
-    menuData =
-    {
-        agility    : this.$menu.find('#agility').val(),
-        difficulty : this.$menu.find('[name=difficulty]:checked').val(),
-        nickName   : this.$menu.find('[name=nickName]').val(),
-        strength   : this.$menu.find('#strength').val()
+const MenuComp = (
+  { player, startGame, pseudoChange, decrease, increase, radioChange },
+) =>
+  {
+    const handleInputChange = event => {
+      const target = event.target;
+      switch (target.type) {
+        case 'text':
+          pseudoChange(target.value);
+          break;
+        default:
+          radioChange(target.value);
+      }
     };
+    const goToGame = () => {
+      console.log(player);
+      if (player && player.pseudo.length === 0) return;
+      startGame(player);
+      hashHistory.push('/game');
+    };
+    return (
+      <form id="interface-menu" className="interface-box interface-menu">
+        <fieldset>
+          <legend><i className="fa fa-gamepad" /> Menu de démarrage</legend>
+          <ul>
+            <li>
+              <label htmlFor="nickName">Votre pseudo :</label>
+              <input
+                id="nickName"
+                name="pseudo"
+                value={player.pseudo}
+                onChange={e => handleInputChange(e)}
+                type="text"
+                maxLength="10"
+              />
+            </li>
+            <li>
+              <label htmlFor="strength">Force :</label>
+              <meter id="strength" min="1" max="15" value={player.strength} />
+              <button
+                className="meter-control"
+                onClick={e => {
+                  e.preventDefault();
+                  decrease('strength');
+                }}
+              >
+                <i className="fa fa-minus" />
+              </button>
+              <button
+                className="meter-control"
+                onClick={e => {
+                  e.preventDefault();
+                  increase('strength');
+                }}
+              >
+                <i className="fa fa-plus" />
+              </button>
+            </li>
+            <li>
+              <label htmlFor="agility">Agilité :</label>
+              <meter id="agility" min="1" max="15" value="10" />
+              <button
+                className="meter-control"
+                onClick={e => {
+                  e.preventDefault();
+                  decrease('agility');
+                }}
+              >
+                <i className="fa fa-minus" />
+              </button>
+              <button
+                className="meter-control"
+                onClick={e => {
+                  e.preventDefault();
+                  increase('agility');
+                }}
+              >
+                <i className="fa fa-plus" />
+              </button>
+            </li>
+            <li>
+              <p>
+                Vous pouvez encore répartir
+                <strong className="remaining-points">
+                  {player.points}
+                </strong>
+                point(s)
+              </p>
+            </li>
+            <li>
+              <label htmlFor="difficulty-normal">Niveau de difficulté :</label>
+              <input
+                id="difficulty-easy"
+                type="radio"
+                name="difficulty"
+                onChange={handleInputChange}
+                value={player.difficulty === 'easy'}
+              />
+              <label className="radio" htmlFor="difficulty-easy">Baby</label>
+              <input
+                id="difficulty-normal"
+                type="radio"
+                name="difficulty"
+                value="normal"
+                onChange={handleInputChange}
+                checked={player.difficulty === 'normal'}
+              />
+              <label className="radio" htmlFor="difficulty-normal">
+                Slayer
+              </label>
+              <input
+                id="difficulty-hard"
+                type="radio"
+                name="difficulty"
+                onChange={handleInputChange}
+                value="hard"
+                checked={player.difficulty === 'hard'}
+              />
+              <label className="radio" htmlFor="difficulty-hard">
+                Nightmare
+              </label>
+            </li>
+            <li>
+              <button className="start" onClick={goToGame}>
+                Démarrer :-)
+              </button>
+            </li>
+          </ul>
+        </fieldset>
+      </form>
+    );
+  };
 
-    // Démarrage du jeu, fourniture des options choisies du menu de démarrage.
-    $(document).trigger('game:start', menuData);
+const Menu = connect(mapStateToProps, mapDispatchToProps)(MenuComp);
 
-    // Suppression du comportement par défaut des boutons (soumission du formulaire).
-    event.preventDefault();
-};
+export default Menu;
