@@ -114,8 +114,9 @@ const MenuComp = (
                 id="difficulty-easy"
                 type="radio"
                 name="difficulty"
+                value="easy"
                 onChange={handleInputChange}
-                value={player.difficulty === 'easy'}
+                checked={player.difficulty === 'easy'}
               />
               <label className="radio" htmlFor="difficulty-easy">Baby</label>
               <input
