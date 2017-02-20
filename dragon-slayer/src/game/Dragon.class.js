@@ -1,6 +1,7 @@
-'use strict';
+import { rollDice } from '../library/utilities';
+import { dataDragons } from '../dragon-slayer-data';
+import $ from 'jquery';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-
 const Dragon = function(type) {
   this.agility = dataDragons[type].agility;
   this.attackLevel = dataDragons[type].attackLevel;

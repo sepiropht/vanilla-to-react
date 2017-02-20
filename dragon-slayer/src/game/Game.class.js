@@ -2,66 +2,104 @@ import World from './World.class';
 import Player from './Player.class';
 import Dragon from './Dragon.class';
 import StatusBar from '../interface/StatusBar.class';
-import Map from '../interface/Map';
+import Map from '../interface/Map.class';
 import React, { Component } from 'react';
-
+import { rollDice } from '../library/utilities';
+import $ from 'jquery';
+import MessagePanel from '../interface/MessagePanel.class';
+import {
+  GAME_STATE_END,
+  GAME_STATE_FIGHT,
+  GAME_STATE_PLAY_START,
+  GAME_STATE_PLAY,
+  KEY_F,
+  DRAGON_TYPE_BLACK,
+  KEY_DOWN_ARROW,
+  DIRECTION_SOUTH,
+  KEY_LEFT_ARROW,
+  DIRECTION_WEST,
+  KEY_RIGHT_ARROW,
+  dataWorldEvents,
+  DIRECTION_EAST,
+  KEY_UP_ARROW,
+  TREASURE_TYPE_SWORD,
+  TREASURE_TYPE_ARMOR,
+  DIRECTION_NORTH,
+  LEVEL_EASY,
+  DRAGON_TYPE_GREEN,
+  DRAGON_TYPE_RED
+} from '../dragon-slayer-data';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-const Game = function() {
-  // Initalisation des propriétés de la classe.
-  this.difficulty = null;
-  this.dragon = null;
-  this.map = new Map();
-  this.player = null;
-  this.state = null;
-  this.statusBar = new StatusBar();
-  this.world = new World();
+class GameMap extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: props,
+      difficulty: null,
+      dragon: null,
+      map: null,
+      player: null,
+      state: null,
+      statusBar: new StatusBar(),
+      world: new World()
+    };
+    console.log(props, 'props');
 
+    this.setup();
+  }
+  componentDidMount() {
+    this.setState({ map: new Map(this.refs.canvas) });
+    $(document).on('game:change-state', this.onGameChangeState.bind(this));
+    this.onGameStart(undefined, this.state.data);
+    // Gestion du changement d'état du jeu (voir dragon-slayer-data.js ligne 28)
+    //
+    // // Gestion du démarrage du jeu (après avoir rempli le menu de démarrage)
+    //$(document).on('game:start', this.onGameStart.bind(this));
+  }
+  // Initalisation des propriétés de la classe.
   /*
      * Installation des gestionnaires d'évènements du jeu.
      *
      * .bind(this) permet de faire en sorte que la variable JavaScript this
      * fonctionne correctement dans les gestionnaires d'évènements.
      */
-  // Gestion du changement d'état du jeu (voir dragon-slayer-data.js ligne 28)
-  $(document).on('game:change-state', this.onGameChangeState.bind(this));
-
-  // Gestion du démarrage du jeu (après avoir rempli le menu de démarrage)
-  $(document).on('game:start', this.onGameStart.bind(this));
-};
-
-Game.prototype.setup = function() {
-  var menu;
-  var messagePanel;
-
-  // Création et affichage du menu de démarrage.
-  menu = new Menu();
-  menu.refresh();
-
-  // Création et initialisation du panneau de messages.
-  messagePanel = new MessagePanel();
-  messagePanel.clear();
-};
-
-Game.prototype.refreshLoop = function() {
-  // Affichage de la carte.
-  this.map.refresh(this.world);
-
-  // Affichage de la barre de statut du jeu.
-  this.statusBar.refresh(this.dragon, this.player);
-
-  // On ne dessine le joueur que s'il est en train de se déplacer sur la carte.
-  if (this.state == GAME_STATE_PLAY || this.state == GAME_STATE_PLAY_START) {
-    // Affichage du joueur sur la carte.
-    this.player.entity.refresh(this.map.canvasContext, this.world);
+  setup() {
+    var messagePanel;
+    // Création et affichage du menu de démarrage.
+    // Création et initialisation du panneau de messages.
+    messagePanel = new MessagePanel();
+    messagePanel.clear();
   }
 
-  // Mise à jour de l'animation des sprites.
-  this.player.entity.sprite.update();
+  refreshLoop() {
+    // Affichage de la carte.
+    debugger;
+    this.state.map.refresh(this.state.world);
 
-  // Affichage des effets spéciaux graphiques éventuels.
-  this.map.refreshPostEffect();
+    // Affichage de la barre de statut du jeu.
+    this.state.statusBar.refresh(this.state.dragon, this.state.player);
 
-  /*
+    // On ne dessine le joueur que s'il est en train de se déplacer sur la carte.
+    if (
+      this.state.state === GAME_STATE_PLAY ||
+      this.state.state === GAME_STATE_PLAY_START
+    ) {
+      // Affichage du joueur sur la carte.
+      console.log('merde');
+      console.log(this.state.map.canvasContext, this.state.world);
+      this.state.player.entity.refresh(
+        this.state.map.canvasContext,
+        this.state.world
+      );
+    }
+
+    // Mise à jour de l'animation des sprites.
+    this.state.player.entity.sprite.update();
+
+    // Affichage des effets spéciaux graphiques éventuels.
+    this.state.map.refreshPostEffect();
+
+    /*
      * Demande au navigateur de nous appeler dans ~16ms
      * Pour créer des animations fluides, l'oeil humain a besoin de voir
      * 60 images par secondes différentes.
@@ -75,103 +113,112 @@ Game.prototype.refreshLoop = function() {
      * .bind(this) permet de faire en sorte que la variable JavaScript this
      * fonctionne correctement dans la méthode.
      */
-  window.requestAnimationFrame(this.refreshLoop.bind(this));
-};
+    window.requestAnimationFrame(this.refreshLoop.bind(this));
+  }
 
-////////////////////// GESTIONNAIRES D'EVENEMENTS DE LA CLASSE //////////////////////
-Game.prototype.onGameChangeState = function(event, gameState) {
-  // Enregistrement de l'état du jeu dans lequel on se trouve désormais.
-  this.state = gameState;
+  ////////////////////// GESTIONNAIRES D'EVENEMENTS DE LA CLASSE //////////////////////
+  onGameChangeState(event, gameState) {
+    // Enregistrement de l'état du jeu dans lequel on se trouve désormais.
+    this.state.state = gameState;
 
-  // Désinstallation de tous les gestionnaires d'évènement du clavier.
-  $(document).off('keydown');
+    // Désinstallation de tous les gestionnaires d'évènement du clavier.
+    $(document).off('keydown');
 
-  // Activation d'un effet spécial graphique pour indiquer le changement d'état.
-  this.map.setPostEffect(gameState);
+    // Activation d'un effet spécial graphique pour indiquer le changement d'état.
+    this.state.map.setPostEffect(gameState);
 
-  switch (gameState) {
-    case GAME_STATE_END: {
-      if (this.dragon.isDead() == true) {
-        $(
-          document,
-        ).trigger('message:add', [ 'Le cadavre du dragon noir fumant gît à vos pieds, ' + '<strong>victoire</strong> ! :-)', 'important' ]);
-      } else // if(this.player.isDead() == true)
-        {
-          $(
-            document,
-          ).trigger('message:add', [ 'Vous avez été <strong>carbonisé</strong> par le dragon, ' + 'pas de chance :-(', 'important' ]);
+    switch (gameState) {
+      case GAME_STATE_END: {
+        if (this.state.dragon.isDead() === true) {
+          $(document).trigger('message:add', [
+            'Le cadavre du dragon noir fumant gît à vos pieds, ' +
+              '<strong>victoire</strong> ! :-)',
+            'important'
+          ]);
+        } else {
+          // if(this.state.player.isDead() ==== true)
+          $(document).trigger('message:add', [
+            'Vous avez été <strong>carbonisé</strong> par le dragon, ' +
+              'pas de chance :-(',
+            'important'
+          ]);
         }
 
-      $(
-        document,
-      ).trigger('message:add', [ '<a href="index.html">Cliquez sur le titre</a> pour relancer le jeu !', 'info' ]);
+        $(document).trigger('message:add', [
+          '<a href="index.html">Cliquez sur le titre</a> pour relancer le jeu !',
+          'info'
+        ]);
 
-      break;
-    }
-
-    case GAME_STATE_FIGHT: {
-      $(
-        document,
-      ).trigger('message:add', [ "Vous avez découvert la grotte d'un dragon, le combat s'engage " + '(<strong>touche F</strong>) !', 'important' ]);
-
-      /*
-             * Installation d'un gestionnaire d'évènement sur l'appui d'une touche.
-             *
-             * .bind(this) permet de faire en sorte que la variable JavaScript this
-             * fonctionne correctement dans les gestionnaires d'évènements.
-             */
-      $(document).on('keydown', this.onKeyDownGameFight.bind(this));
-
-      break;
-    }
-
-    case GAME_STATE_PLAY:
-    case GAME_STATE_PLAY_START: {
-      $(
-        document,
-      ).trigger('message:add', [ 'Trouvez et détruisez le <strong>DRAGON NOIR</strong> pour gagner ' + 'la partie&nbsp;!', 'info' ]);
-
-      /*
-             * Installation d'un gestionnaire d'évènement sur l'appui d'une touche.
-             *
-             * .bind(this) permet de faire en sorte que la variable JavaScript this
-             * fonctionne correctement dans les gestionnaires d'évènements.
-             */
-      $(document).on('keydown', this.onKeyDownGamePlay.bind(this));
-
-      if (gameState == GAME_STATE_PLAY_START) {
-        $(
-          document,
-        ).trigger('message:add', [ 'Bienvenu(e) <em>' + this.player.nickName + '</em> ;-)', 'info' ]);
-
-        // Mise en place de la barre de statut.
-        this.statusBar.setup();
-
-        // Affichage initial du jeu.
-        this.refreshLoop();
+        break;
       }
 
-      break;
+      case GAME_STATE_FIGHT: {
+        $(document).trigger('message:add', [
+          "Vous avez découvert la grotte d'un dragon, le combat s'engage " +
+            '(<strong>touche F</strong>) !',
+          'important'
+        ]);
+
+        /*
+             * Installation d'un gestionnaire d'évènement sur l'appui d'une touche.
+             *
+             * .bind(this) permet de faire en sorte que la variable JavaScript this
+             * fonctionne correctement dans les gestionnaires d'évènements.
+             */
+        $(document).on('keydown', this.onKeyDownGameFight.bind(this));
+
+        break;
+      }
+
+      case GAME_STATE_PLAY:
+      case GAME_STATE_PLAY_START: {
+        $(document).trigger('message:add', [
+          'Trouvez et détruisez le <strong>DRAGON NOIR</strong> pour gagner ' +
+            'la partie&nbsp;!',
+          'info'
+        ]);
+
+        /*
+             * Installation d'un gestionnaire d'évènement sur l'appui d'une touche.
+             *
+             * .bind(this) permet de faire en sorte que la variable JavaScript this
+             * fonctionne correctement dans les gestionnaires d'évènements.
+             */
+        $(document).on('keydown', this.onKeyDownGamePlay.bind(this));
+
+        if (gameState === GAME_STATE_PLAY_START) {
+          $(document).trigger('message:add', [
+            'Bienvenu(e) <em>' + this.state.player.nickName + '</em> ;-)',
+            'info'
+          ]);
+
+          // Mise en place de la barre de statut.
+          this.state.statusBar.setup();
+
+          // Affichage initial du jeu.
+          this.refreshLoop();
+        }
+
+        break;
+      }
     }
   }
-};
 
-Game.prototype.onGameStart = function(event, menuData) {
-  // Enregistrement de la difficulté du jeu.
-  this.difficulty = menuData.difficulty;
+  onGameStart(event, menuData) {
+    console.log('menuData', menuData);
+    this.state.difficulty = menuData.difficulty;
 
-  // Création du joueur.
-  this.player = new Player(
-    menuData.nickName,
-    menuData.agility,
-    menuData.strength,
-  );
+    // Création du joueur.
+    this.state.player = new Player(
+      menuData.pseudo,
+      menuData.agility,
+      menuData.strength
+    );
 
-  // Placement du joueur sur la carte du monde.
-  this.player.entity.moveTo(16, 23);
+    // Placement du joueur sur la carte du monde.
+    this.state.player.entity.moveTo(16, 23);
 
-  // On cache le menu de démarrage...
-  $('#interface-menu').fadeOut(1000, function() {
+    // On cache le menu de démarrage...
     // ...Puis on affiche le jeu.
     $('main').fadeIn(1500, function() {
       // Suppression de l'animation sur le titre du jeu.
@@ -180,130 +227,174 @@ Game.prototype.onGameStart = function(event, menuData) {
       // Le joueur est maintenant sur la carte !
       $(document).trigger('game:change-state', GAME_STATE_PLAY_START);
     });
-  });
-};
-
-Game.prototype.onKeyDownGameFight = function(event) {
-  var dragonSpeed;
-  var playerSpeed;
-
-  // Est-ce que le joueur a appuyé sur la touche de combat (touche F) ?
-  if (event.keyCode != KEY_F) {
-    // Non, le joueur a appuyé sur une touche que l'on ne gère pas.
-    return false;
   }
 
-  // Calcul aléatoire de la vitesse du dragon et du joueur.
-  dragonSpeed = rollDice();
-  playerSpeed = rollDice();
+  onKeyDownGameFight(event) {
+    var dragonSpeed;
+    var playerSpeed;
 
-  // Est-ce que le dragon est plus rapide que le joueur ?
-  if (dragonSpeed > playerSpeed) {
-    // Oui, le dragon attaque le joueur.
-    this.dragon.attack(this.player);
-  } else {
-    // Non, le joueur ataque le dragon.
-    this.player.attack(this.dragon);
-  }
+    // Est-ce que le joueur a appuyé sur la touche de combat (touche F) ?
+    if (event.keyCode !== KEY_F) {
+      // Non, le joueur a appuyé sur une touche que l'on ne gère pas.
+      return false;
+    }
 
-  if (this.dragon.isDead() == true) {
-    if (this.dragon.type == DRAGON_TYPE_BLACK) {
-      // Le joueur a gagné la partie !
-      $(document).trigger('game:change-state', GAME_STATE_END);
+    // Calcul aléatoire de la vitesse du dragon et du joueur.
+    dragonSpeed = rollDice();
+    playerSpeed = rollDice();
+
+    // Est-ce que le dragon est plus rapide que le joueur ?
+    if (dragonSpeed > playerSpeed) {
+      // Oui, le dragon attaque le joueur.
+      this.state.dragon.attack(this.state.player);
     } else {
-      $(
-        document,
-      ).trigger('message:add', [ "Le dragon est mort, mais ce n'est pas un dragon noir, " + '<strong>continuez</strong> ! :-)', 'important' ]);
+      // Non, le joueur ataque le dragon.
+      this.state.player.attack(this.state.dragon);
+    }
 
-      // Il n'y a plus de dragon à gérer.
-      this.dragon = null;
+    if (this.state.dragon.isDead() === true) {
+      if (this.state.dragon.type === DRAGON_TYPE_BLACK) {
+        // Le joueur a gagné la partie !
+        $(document).trigger('game:change-state', GAME_STATE_END);
+      } else {
+        $(document).trigger('message:add', [
+          "Le dragon est mort, mais ce n'est pas un dragon noir, " +
+            '<strong>continuez</strong> ! :-)',
+          'important'
+        ]);
 
-      // Le joueur retourne sur la carte, à la recherche du dragon noir !
-      $(document).trigger('game:change-state', GAME_STATE_PLAY);
+        // Il n'y a plus de dragon à gérer.
+        this.state.dragon = null;
+
+        // Le joueur retourne sur la carte, à la recherche du dragon noir !
+        $(document).trigger('game:change-state', GAME_STATE_PLAY);
+      }
+    }
+    if (this.state.player.isDead() === true) {
+      // Game over !
+      $(document).trigger('game:change-state', GAME_STATE_END);
     }
   }
-  if (this.player.isDead() == true) {
-    // Game over !
-    $(document).trigger('game:change-state', GAME_STATE_END);
-  }
-};
 
-Game.prototype.onKeyDownGamePlay = function(event) {
-  var index;
+  onKeyDownGamePlay(event) {
+    var index;
 
-  /*
+    /*
      * Vérification de la touche du clavier sur lequel le joueur a appuyé.
      *
      * L'objet event contient des informations sur l'évènement dont le code
      * de touche du clavier.
      */
-  switch (event.keyCode) {
-    case KEY_DOWN_ARROW:
-      // Tentative de déplacement du joueur d'une case vers le sud.
-      this.player.tryMove(DIRECTION_SOUTH, this.world);
-      break;
+    switch (event.keyCode) {
+      case KEY_DOWN_ARROW:
+        // Tentative de déplacement du joueur d'une case vers le sud.
+        this.state.player.tryMove(DIRECTION_SOUTH, this.state.world);
+        break;
 
-    case KEY_LEFT_ARROW:
-      // Tentative de déplacement du joueur d'une case vers l'ouest.
-      this.player.tryMove(DIRECTION_WEST, this.world);
-      break;
+      case KEY_LEFT_ARROW:
+        // Tentative de déplacement du joueur d'une case vers l'ouest.
+        this.state.player.tryMove(DIRECTION_WEST, this.state.world);
+        break;
 
-    case KEY_RIGHT_ARROW:
-      // Tentative de déplacement du joueur d'une case vers l'est.
-      this.player.tryMove(DIRECTION_EAST, this.world);
-      break;
+      case KEY_RIGHT_ARROW:
+        // Tentative de déplacement du joueur d'une case vers l'est.
+        this.state.player.tryMove(DIRECTION_EAST, this.state.world);
+        break;
 
-    case KEY_UP_ARROW:
-      // Tentative de déplacement du joueur d'une case vers le nord.
-      this.player.tryMove(DIRECTION_NORTH, this.world);
-      break;
+      case KEY_UP_ARROW:
+        // Tentative de déplacement du joueur d'une case vers le nord.
+        this.state.player.tryMove(DIRECTION_NORTH, this.state.world);
+        break;
 
-    default:
-      // Le joueur a appuyé sur une touche que l'on ne gère pas.
-      return false;
-  }
+      default:
+        // Le joueur a appuyé sur une touche que l'on ne gère pas.
+        return false;
+    }
 
-  /*
+    /*
      * Vérification que le joueur ne s'est pas placé sur un carreau relié à un
      * évènement sur la carte.
      */
-  for (index = 0; index < dataWorldEvents.length; index++) {
-    // Est-ce que l'évènement ne s'est pas déjà produit ?
-    if (dataWorldEvents[index].done == false) {
-      // Non, est-ce que les coordonnées (x, y) correspondent avec celles du joueur ?
-      if (
-        dataWorldEvents[index].x == this.player.entity.x &&
-          dataWorldEvents[index].y == this.player.entity.y
-      ) {
-        // Oui, quel type d'évènement faut-il déclencher ?
-        switch (dataWorldEvents[index].what) {
-          case 'dragon-1':
-            if (this.difficulty == LEVEL_EASY) {
-              this.dragon = new Dragon(DRAGON_TYPE_GREEN);
-            } else {
-              this.dragon = new Dragon(DRAGON_TYPE_RED);
-            }
-            $(document).trigger('game:change-state', GAME_STATE_FIGHT);
-            break;
+    for (index = 0; index < dataWorldEvents.length; index++) {
+      // Est-ce que l'évènement ne s'est pas déjà produit ?
+      if (dataWorldEvents[index].done === false) {
+        // Non, est-ce que les coordonnées (x, y) correspondent avec celles du joueur ?
+        if (
+          dataWorldEvents[index].x === this.state.player.entity.x &&
+          dataWorldEvents[index].y === this.state.player.entity.y
+        ) {
+          // Oui, quel type d'évènement faut-il déclencher ?
+          switch (dataWorldEvents[index].what) {
+            case 'dragon-1':
+              if (this.state.difficulty === LEVEL_EASY) {
+                this.state.dragon = new Dragon(DRAGON_TYPE_GREEN);
+              } else {
+                this.state.dragon = new Dragon(DRAGON_TYPE_RED);
+              }
+              $(document).trigger('game:change-state', GAME_STATE_FIGHT);
+              break;
 
-          case 'dragon-2':
-            this.dragon = new Dragon(DRAGON_TYPE_BLACK);
-            $(document).trigger('game:change-state', GAME_STATE_FIGHT);
-            break;
+            case 'dragon-2':
+              this.state.dragon = new Dragon(DRAGON_TYPE_BLACK);
+              $(document).trigger('game:change-state', GAME_STATE_FIGHT);
+              break;
 
-          case 'treasure-1':
-            this.player.giveTreasure(TREASURE_TYPE_SWORD, this.difficulty);
-            break;
+            case 'treasure-1':
+              this.state.player.giveTreasure(
+                TREASURE_TYPE_SWORD,
+                this.state.difficulty
+              );
+              break;
 
-          case 'treasure-2':
-            this.player.giveTreasure(TREASURE_TYPE_ARMOR, this.difficulty);
-            break;
+            case 'treasure-2':
+              this.state.player.giveTreasure(
+                TREASURE_TYPE_ARMOR,
+                this.state.difficulty
+              );
+              break;
+          }
+
+          // L'évènement s'est produit, il ne doit plus s'exécuter de nouveau.
+          dataWorldEvents[index].done = true;
         }
-
-        // L'évènement s'est produit, il ne doit plus s'exécuter de nouveau.
-        dataWorldEvents[index].done = true;
       }
     }
   }
-};
-export default Game;
+  render() {
+    return (
+      <main className="hide">
+        <section className="interface-box interface-game">
+          //  Carte du jeu
+          <canvas ref="canvas" width={640} height={480} />
+          //  Barre de statut
+          <table id="interface-status-bar" className="interface-status-bar">
+            <thead>
+              <tr>
+                <th className="disabled" />
+                <th className="player" />
+                <th className="disabled" />
+                <th className="disabled" />
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td />
+                <td />
+                <td />
+                <td />
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <aside
+          id="interface-message-panel"
+          className="interface-box interface-message-panel"
+        >
+          <ul />
+        </aside>
+      </main>
+    );
+  }
+}
+
+export default GameMap;

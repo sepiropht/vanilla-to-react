@@ -1,12 +1,22 @@
-'use strict';
+import CanvasFX from '../library/CanvasFX.class';
+import {
+  MAP_HEIGHT,
+  MAP_WIDTH,
+  dataTiles,
+  TILESET_PIXEL_SIZE,
+  GAME_STATE_END,
+  GAME_STATE_FIGHT,
+  GAME_STATE_PLAY,
+  GAME_STATE_PLAY_START
+} from '../dragon-slayer-data';
+import tileset from '../images/tileset.png';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-
-const Map = function() {
+const Map = function(domContext) {
   var canvas;
 
   // Recherche de l'objet JavaScript natif représentant la balise <canvas>.
-  canvas = document.querySelector('#interface-map');
-
+  canvas = domContext;
+  console.log(domContext);
   // Récupération du contexte 2D du canvas.
   this.canvasContext = canvas.getContext('2d');
 
@@ -19,16 +29,18 @@ const Map = function() {
      * La classe Image représente un objet DOM de la balise HTML <img>.
      */
   this.tileset = new Image();
-  this.tileset.src = 'images/tileset.png';
+  this.tileset.src = tileset;
 };
 
 Map.prototype.refresh = function(world) {
   var tile;
-  var x, y;
-
-  for (y = 0; y < MAP_HEIGHT; y++) {
-    for (x = 0; x < MAP_WIDTH; x++) {
+  var x = 0;
+  var y = 0;
+  console.log('passed ici');
+  for (y = 0; y < 30; y++) {
+    for (x = 0; x < 40; x++) {
       // Récupération du petit carreau aux coordonnées (x, y).
+      console.log('coord', x, y);
       tile = world.getTileAt(x, y);
 
       /*
@@ -54,7 +66,7 @@ Map.prototype.refresh = function(world) {
         TILESET_PIXEL_SIZE,
         // dWidth  (16 pixels)
         // dHeight (16 pixels)
-        TILESET_PIXEL_SIZE,
+        TILESET_PIXEL_SIZE
       );
     }
   }

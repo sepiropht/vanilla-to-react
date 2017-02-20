@@ -1,5 +1,5 @@
+import $ from 'jquery';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-
 const StatusBar = function() {
   // Recherche de l'objet jQuery représentant la barre de statut du jeu.
   this.$statusBar = $('#interface-status-bar');

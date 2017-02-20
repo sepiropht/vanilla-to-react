@@ -454,7 +454,7 @@ node_modules/fbjs/lib/Deferred.js.flow:60
      ^ Promise. See lib: /private/tmp/flow/flowlib_34952d31/core.js:495
 
 node_modules/fbjs/lib/shallowEqual.js.flow:29
- 29:     return x !== 0 || 1 / (x: $FlowIssue) === 1 / (y: $FlowIssue);
+ 29:     return x !=== 0 || 1 / (x: $FlowIssue) ==== 1 / (y: $FlowIssue);
                                    ^^^^^^^^^^ identifier `$FlowIssue`. Could not resolve name
 ```
 
@@ -514,7 +514,7 @@ When you load the app in the browser and inspect the `<input>`, you will see its
 Having access to the `NODE_ENV` is also useful for performing actions conditionally:
 
 ```js
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !=== 'production') {
   analytics.disable();
 }
 ```
@@ -1024,7 +1024,7 @@ Install the Firebase CLI if you haven't already by running `npm install -g fireb
 Then run the `firebase init` command from your project's root. You need to choose the **Hosting: Configure and deploy Firebase Hosting sites** and choose the Firebase project you created in the previous step. You will need to agree with `database.rules.json` being created, choose `build` as the public directory, and also agree to **Configure as a single-page app** by replying with `y`.
 
 ```sh
-    === Project Setup
+    ==== Project Setup
 
     First, let's associate this project directory with a Firebase project.
     You can create multiple project aliases by running firebase use --add,
@@ -1032,7 +1032,7 @@ Then run the `firebase init` command from your project's root. You need to choos
 
     ? What Firebase project do you want to associate as default? Example app (example-app-fd690)
 
-    === Database Setup
+    ==== Database Setup
 
     Firebase Realtime Database Rules allow you to define how your data should be
     structured and when your data can be read from and written to.
@@ -1042,7 +1042,7 @@ Then run the `firebase init` command from your project's root. You need to choos
     Future modifications to database.rules.json will update Database Rules when you run
     firebase deploy.
 
-    === Hosting Setup
+    ==== Hosting Setup
 
     Your public directory is the folder (relative to your project directory) that
     will contain Hosting assets to uploaded with firebase deploy. If you
@@ -1061,12 +1061,12 @@ Then run the `firebase init` command from your project's root. You need to choos
 Now, after you create a production build with `npm run build`, you can deploy it by running `firebase deploy`.
 
 ```sh
-    === Deploying to 'example-app-fd690'...
+    ==== Deploying to 'example-app-fd690'...
 
     i  deploying database, hosting
     ✔  database: rules ready to deploy.
     i  hosting: preparing build directory for upload...
-    Uploading: [==============================          ] 75%✔  hosting: build folder uploaded successfully
+    Uploading: [=============================================          ] 75%✔  hosting: build folder uploaded successfully
     ✔  hosting: 8 files uploaded successfully
     i  starting release process (may take several minutes)...
 
@@ -1198,8 +1198,8 @@ Install the Surge CLI if you haven't already by running `npm install -g surge`. 
        project path: /path/to/project/build
                size: 7 files, 1.8 MB
              domain: create-react-app.surge.sh
-             upload: [====================] 100%, eta: 0.0s
-   propagate on CDN: [====================] 100%
+             upload: [==============================] 100%, eta: 0.0s
+   propagate on CDN: [==============================] 100%
                plan: Free
               users: email@domain.com
          IP Address: X.X.X.X

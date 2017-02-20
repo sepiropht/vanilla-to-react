@@ -1,6 +1,9 @@
-'use strict';
+import { getRandomInteger, rollDice } from '../library/utilities';
+import Entity from '../interface/Entity.class';
+import $ from 'jquery';
+import * as dataGame from '../dragon-slayer-data';
+import link from '../images/link.png';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-
 const Player = function(nickName, agility, strength) {
   // Est-ce que le joueur a saisi un pseudo ?
   if (nickName.length === 0) {
@@ -15,7 +18,7 @@ const Player = function(nickName, agility, strength) {
   // Niveau d'attaque minimum
   this.defenseLevel = 1;
   // Niveau de défense minimum
-  this.entity = new Entity('images/link.png', 32, 12);
+  this.entity = new Entity(link, 32, 12);
   this.hp = getRandomInteger(200, 250);
   this.nickName = nickName.toLowerCase();
   this.strength = strength;
@@ -27,9 +30,10 @@ Player.prototype.attack = function(dragon) {
 
   // Est-ce que le dragon va réussir à éviter le coup ?
   if (dragon.tryHit(this) == false) {
-    $(
-      document,
-    ).trigger('message:add', 'Vous avez raté votre coup contre le dragon !');
+    $(document).trigger(
+      'message:add',
+      'Vous avez raté votre coup contre le dragon !'
+    );
 
     return;
   }
@@ -49,9 +53,10 @@ Player.prototype.attack = function(dragon) {
   // Diminution des points de vie du dragon.
   dragon.takeHp(damagePoints);
 
-  $(
-    document,
-  ).trigger('message:add', [ 'Vous avez infligé ' + damagePoints + ' dégâts au dragon !', 'important' ]);
+  $(document).trigger('message:add', [
+    'Vous avez infligé ' + damagePoints + ' dégâts au dragon !',
+    'important'
+  ]);
 };
 
 Player.prototype.getAttackLevel = function() {
@@ -63,46 +68,48 @@ Player.prototype.giveHp = function(healthPoints) {
 };
 
 Player.prototype.giveTreasure = function(type, difficulty) {
-  if (type == TREASURE_TYPE_ARMOR) {
-    this.armor = dataTreasures[difficulty].armor;
+  if (type == dataGame.TREASURE_TYPE_ARMOR) {
+    this.armor = dataGame.dataTreasures[difficulty].armor;
 
     switch (this.armor) {
-      case ARMOR_COPPER:
+      case dataGame.ARMOR_COPPER:
         this.defenseLevel = 2;
         break;
 
-      case ARMOR_IRON:
+      case dataGame.ARMOR_IRON:
         this.defenseLevel = 6;
         break;
 
-      case ARMOR_MAGICAL:
+      case dataGame.ARMOR_MAGICAL:
         this.defenseLevel = 12;
         break;
     }
 
-    $(
-      document,
-    ).trigger('message:add', [ "Vous avez trouvé l'" + this.armor + ' !', 'important' ]);
-  } else if (type == TREASURE_TYPE_SWORD) {
-    this.sword = dataTreasures[difficulty].sword;
+    $(document).trigger('message:add', [
+      "Vous avez trouvé l'" + this.armor + ' !',
+      'important'
+    ]);
+  } else if (type == dataGame.TREASURE_TYPE_SWORD) {
+    this.sword = dataGame.dataTreasures[difficulty].sword;
 
     switch (this.sword) {
-      case SWORD_WOOD:
+      case dataGame.SWORD_WOOD:
         this.attackLevel = 2;
         break;
 
-      case SWORD_STEEL:
+      case dataGame.SWORD_STEEL:
         this.attackLevel = 6;
         break;
 
-      case SWORD_EXCALIBUR:
+      case dataGame.SWORD_EXCALIBUR:
         this.attackLevel = 12;
         break;
     }
 
-    $(
-      document,
-    ).trigger('message:add', [ "Vous avez trouvé l'" + this.sword + ' !', 'important' ]);
+    $(document).trigger('message:add', [
+      "Vous avez trouvé l'" + this.sword + ' !',
+      'important'
+    ]);
   }
 };
 
