@@ -1,4 +1,3 @@
-'use strict';
 ////////////////////// DONNEES GLOBALES //////////////////////
 
 /*
@@ -156,28 +155,28 @@ dataDragons[DRAGON_TYPE_GREEN] = {
   defenseLevel: 10,
   agility: 5,
   hp: 180,
-  strength: 5,
+  strength: 5
 };
 dataDragons[DRAGON_TYPE_RED] = {
   attackLevel: 10,
   defenseLevel: 12,
   agility: 8,
   hp: 210,
-  strength: 10,
+  strength: 10
 };
 dataDragons[DRAGON_TYPE_BLACK] = {
   attackLevel: 12,
   defenseLevel: 15,
   agility: 10,
   hp: 240,
-  strength: 15,
+  strength: 15
 };
 
 /*
  * Dimensions de la carte du jeu en nombre de carreaux.
  */
-const MAP_HEIGHT = 30;
-const MAP_WIDTH = 40;
+export const MAP_HEIGHT = 30;
+export const MAP_WIDTH = 40;
 
 /*
  * Dimensions du monde du jeu en nombre de carreaux.
@@ -249,7 +248,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -311,7 +310,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -373,7 +372,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -435,7 +434,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -497,7 +496,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -559,7 +558,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -621,7 +620,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -683,7 +682,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -745,7 +744,7 @@ export var dataWorld = [
     '17',
     '17',
     '17',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -807,7 +806,7 @@ export var dataWorld = [
     '22',
     '22',
     '22',
-    '22',
+    '22'
   ],
   [
     '16',
@@ -869,7 +868,7 @@ export var dataWorld = [
     '15',
     0,
     '5',
-    '8',
+    '8'
   ],
   [
     '16',
@@ -931,7 +930,7 @@ export var dataWorld = [
     0,
     '5',
     '3',
-    '3',
+    '3'
   ],
   [
     '16',
@@ -993,7 +992,7 @@ export var dataWorld = [
     '5',
     '3',
     '3',
-    '3',
+    '3'
   ],
   [
     '16',
@@ -1055,7 +1054,7 @@ export var dataWorld = [
     '3',
     '3',
     '3',
-    '3',
+    '3'
   ],
   [
     '16',
@@ -1117,7 +1116,7 @@ export var dataWorld = [
     '3',
     '3',
     '3',
-    '3',
+    '3'
   ],
   [
     '16',
@@ -1179,7 +1178,7 @@ export var dataWorld = [
     '3',
     '3',
     '3',
-    '3',
+    '3'
   ],
   [
     '16',
@@ -1241,7 +1240,7 @@ export var dataWorld = [
     '16',
     0,
     '7',
-    '3',
+    '3'
   ],
   [
     '16',
@@ -1303,7 +1302,7 @@ export var dataWorld = [
     0,
     0,
     0,
-    '7',
+    '7'
   ],
   [
     '16',
@@ -1365,7 +1364,7 @@ export var dataWorld = [
     0,
     0,
     '21',
-    '19',
+    '19'
   ],
   [
     '16',
@@ -1427,7 +1426,7 @@ export var dataWorld = [
     0,
     0,
     '25',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -1489,7 +1488,7 @@ export var dataWorld = [
     '15',
     0,
     '25',
-    '17',
+    '17'
   ],
   [
     '16',
@@ -1551,7 +1550,7 @@ export var dataWorld = [
     '15',
     '15',
     '24',
-    '22',
+    '22'
   ],
   [
     '16',
@@ -1613,7 +1612,7 @@ export var dataWorld = [
     '15',
     '15',
     '15',
-    '15',
+    '15'
   ],
   [
     '16',
@@ -1675,7 +1674,7 @@ export var dataWorld = [
     0,
     '15',
     '15',
-    '15',
+    '15'
   ],
   [
     '16',
@@ -1737,7 +1736,7 @@ export var dataWorld = [
     '4',
     0,
     0,
-    0,
+    0
   ],
   [
     '16',
@@ -1799,7 +1798,7 @@ export var dataWorld = [
     '3',
     '4',
     0,
-    0,
+    0
   ],
   [
     '16',
@@ -1861,7 +1860,7 @@ export var dataWorld = [
     '3',
     '3',
     '4',
-    0,
+    0
   ],
   [
     '19',
@@ -1923,7 +1922,7 @@ export var dataWorld = [
     '3',
     '3',
     '3',
-    '4',
+    '4'
   ],
   [
     '17',
@@ -1985,7 +1984,7 @@ export var dataWorld = [
     '3',
     '3',
     '3',
-    '3',
+    '3'
   ],
   [
     '17',
@@ -2047,8 +2046,8 @@ export var dataWorld = [
     '3',
     '3',
     '3',
-    '3',
-  ],
+    '3'
+  ]
 ];
 
 /*
@@ -2058,5 +2057,5 @@ export var dataWorldEvents = [
   { x: 10, y: 24, done: false, what: 'dragon-1' },
   { x: 1, y: 8, done: false, what: 'treasure-2' },
   { x: 22, y: 22, done: false, what: 'treasure-1' },
-  { x: 51, y: 17, done: false, what: 'dragon-2' },
+  { x: 51, y: 17, done: false, what: 'dragon-2' }
 ];
