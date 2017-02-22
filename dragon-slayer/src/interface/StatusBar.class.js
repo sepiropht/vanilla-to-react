@@ -1,15 +1,49 @@
 import $ from 'jquery';
+import React, { Component } from 'react';
+
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-const StatusBar = function() {
+const StatusBar = props => {
   // Recherche de l'objet jQuery représentant la barre de statut du jeu.
-  this.$statusBar = $('#interface-status-bar');
+  // this.$statusBar = $('#interface-status-bar');
+  // console.log(this.$statusBar);
+  console.log('yo');
+  return (
+    <table id="interface-status-bar" className="interface-status-bar">
+      <thead>
+        <tr>
+          <th className="disabled">PV Dragon</th>
+          <th className="player">PV Joueur</th>
+          <th className="disabled">Armure</th>
+          <th className="disabled">Sword</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            {props.dragon && props.dragon.hp ? props.dragon.hp : 'N/A'}
+          </td>
+          <td>
+            {props.player && props.player.hp ? props.player.hp : 'N/A'}
+          </td>
+          <td>
+            {props.player && props.player.armor ? props.player.armor : 'N/A'}
+          </td>
+          <td>
+            {props.player && props.player.sword
+              ? props.player.sword
+              : 'epée en bois'}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
 };
 
 StatusBar.prototype.refresh = function(dragon, player) {
   var dragonHp;
   var playerArmor;
   var playerSword;
-
+  console.log('StatusBar');
   // Gestion des points de vie du dragon.
   dragonHp = 'N/A';
   if (dragon != null) {

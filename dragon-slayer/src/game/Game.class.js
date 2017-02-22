@@ -41,7 +41,6 @@ class GameMap extends Component {
       messages: [],
       player: null,
       state: null,
-      statusBar: new StatusBar(),
       world: new World()
     };
 
@@ -70,7 +69,6 @@ class GameMap extends Component {
     this.state.map.refresh(this.state.world);
 
     // Affichage de la barre de statut du jeu.
-    this.state.statusBar.refresh(this.state.dragon, this.state.player);
 
     // On ne dessine le joueur que s'il est en train de se déplacer sur la carte.
     if (
@@ -224,9 +222,6 @@ class GameMap extends Component {
               }
             ]
           });
-
-          // Mise en place de la barre de statut.
-          this.state.statusBar.setup();
 
           // Affichage initial du jeu.
           this.refreshLoop();
@@ -403,31 +398,11 @@ class GameMap extends Component {
     }
   }
   render() {
-    console.log('yo');
     return (
       <main className="hide">
         <section className="interface-box interface-game">
-          //  Carte du jeu
           <canvas ref="canvas" width={640} height={480} />
-          //  Barre de statut
-          <table id="interface-status-bar" className="interface-status-bar">
-            <thead>
-              <tr>
-                <th className="disabled" />
-                <th className="player" />
-                <th className="disabled" />
-                <th className="disabled" />
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td />
-                <td />
-                <td />
-                <td />
-              </tr>
-            </tbody>
-          </table>
+          <StatusBar player={this.state.player} dragon={this.state.dragon} />
         </section>
         <MessagePanel messages={this.state.messages} />
       </main>

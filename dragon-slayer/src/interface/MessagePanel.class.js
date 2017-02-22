@@ -2,10 +2,10 @@
 import $ from 'jquery';
 import React, { Component } from 'react';
 
-var MessagePanel = function(props) {
-  console.log(props);
-  const Messages = props.messages.map(message => (
+const MessagePanel = props => {
+  const Messages = props.messages.map((message, index) => (
     <li
+      key={index}
       className={
         message.categorie ? 'message-' + message.categorie : 'message-normal'
       }
@@ -22,14 +22,4 @@ var MessagePanel = function(props) {
     </aside>
   );
 };
-
-// function render() {
-//   //  Panneau de messages
-//   <aside
-//     id="interface-message-panel"
-//     className="interface-box interface-message-panel"
-//   >
-//     <ul />
-//   </aside>;
-// }
 export default MessagePanel;
