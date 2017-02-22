@@ -38,12 +38,12 @@ class GameMap extends Component {
       difficulty: null,
       dragon: null,
       map: null,
+      messages: [],
       player: null,
       state: null,
       statusBar: new StatusBar(),
       world: new World()
     };
-    console.log(props, 'props');
 
     this.setup();
   }
@@ -63,17 +63,10 @@ class GameMap extends Component {
      * .bind(this) permet de faire en sorte que la variable JavaScript this
      * fonctionne correctement dans les gestionnaires d'évènements.
      */
-  setup() {
-    var messagePanel;
-    // Création et affichage du menu de démarrage.
-    // Création et initialisation du panneau de messages.
-    messagePanel = new MessagePanel();
-    messagePanel.clear();
-  }
+  setup() {}
 
   refreshLoop() {
     // Affichage de la carte.
-    debugger;
     this.state.map.refresh(this.state.world);
 
     // Affichage de la barre de statut du jeu.
@@ -85,8 +78,7 @@ class GameMap extends Component {
       this.state.state === GAME_STATE_PLAY_START
     ) {
       // Affichage du joueur sur la carte.
-      console.log('merde');
-      console.log(this.state.map.canvasContext, this.state.world);
+
       this.state.player.entity.refresh(
         this.state.map.canvasContext,
         this.state.world
@@ -130,11 +122,21 @@ class GameMap extends Component {
     switch (gameState) {
       case GAME_STATE_END: {
         if (this.state.dragon.isDead() === true) {
-          $(document).trigger('message:add', [
-            'Le cadavre du dragon noir fumant gît à vos pieds, ' +
-              '<strong>victoire</strong> ! :-)',
-            'important'
-          ]);
+          // $(document).trigger('message:add', [
+          //   'Le cadavre du dragon noir fumant gît à vos pieds, ' +
+          //     '<strong>victoire</strong> ! :-)',
+          //   'important'
+          // ]);
+          this.setState({
+            messages: [
+              ...this.state.messages,
+              {
+                text: 'Le cadavre du dragon noir fumant gît à vos pieds, ' +
+                  '<strong>victoire</strong> ! :-)',
+                categorie: 'important'
+              }
+            ]
+          });
         } else {
           // if(this.state.player.isDead() ==== true)
           $(document).trigger('message:add', [
@@ -142,6 +144,16 @@ class GameMap extends Component {
               'pas de chance :-(',
             'important'
           ]);
+          this.setState({
+            messages: [
+              ...this.state.messages,
+              {
+                text: 'Vous avez été <strong>carbonisé</strong> par le dragon, ' +
+                  'pas de chance :-(',
+                categorie: 'important'
+              }
+            ]
+          });
         }
 
         $(document).trigger('message:add', [
@@ -177,6 +189,16 @@ class GameMap extends Component {
             'la partie&nbsp;!',
           'info'
         ]);
+        this.setState({
+          messages: [
+            ...this.state.messages,
+            {
+              text: 'Trouvez et détruisez le <strong>DRAGON NOIR</strong> pour gagner ' +
+                'la partie&nbsp;!',
+              categorie: 'info'
+            }
+          ]
+        });
 
         /*
              * Installation d'un gestionnaire d'évènement sur l'appui d'une touche.
@@ -187,10 +209,21 @@ class GameMap extends Component {
         $(document).on('keydown', this.onKeyDownGamePlay.bind(this));
 
         if (gameState === GAME_STATE_PLAY_START) {
-          $(document).trigger('message:add', [
-            'Bienvenu(e) <em>' + this.state.player.nickName + '</em> ;-)',
-            'info'
-          ]);
+          // $(document).trigger('message:add', [
+          //   'Bienvenu(e) <em>' + this.state.player.nickName + '</em> ;-)',
+          //   'info'
+          // ]);
+          this.setState({
+            messages: [
+              ...this.state.messages,
+              {
+                text: 'Bienvenu(e) <em>' +
+                  this.state.player.nickName +
+                  '</em> ;-)',
+                categorie: 'info'
+              }
+            ]
+          });
 
           // Mise en place de la barre de statut.
           this.state.statusBar.setup();
@@ -205,7 +238,6 @@ class GameMap extends Component {
   }
 
   onGameStart(event, menuData) {
-    console.log('menuData', menuData);
     this.state.difficulty = menuData.difficulty;
 
     // Création du joueur.
@@ -262,6 +294,16 @@ class GameMap extends Component {
             '<strong>continuez</strong> ! :-)',
           'important'
         ]);
+        this.setState({
+          messages: [
+            ...this.state.messages,
+            {
+              text: "Le dragon est mort, mais ce n'est pas un dragon noir, " +
+                '<strong>continuez</strong> ! :-)',
+              categorie: 'important'
+            }
+          ]
+        });
 
         // Il n'y a plus de dragon à gérer.
         this.state.dragon = null;
@@ -361,6 +403,7 @@ class GameMap extends Component {
     }
   }
   render() {
+    console.log('yo');
     return (
       <main className="hide">
         <section className="interface-box interface-game">
@@ -386,12 +429,7 @@ class GameMap extends Component {
             </tbody>
           </table>
         </section>
-        <aside
-          id="interface-message-panel"
-          className="interface-box interface-message-panel"
-        >
-          <ul />
-        </aside>
+        <MessagePanel messages={this.state.messages} />
       </main>
     );
   }
