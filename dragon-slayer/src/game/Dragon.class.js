@@ -2,13 +2,14 @@ import { rollDice } from '../library/utilities';
 import { dataDragons } from '../dragon-slayer-data';
 import $ from 'jquery';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-const Dragon = function(type) {
+const Dragon = function(type, message) {
   this.agility = dataDragons[type].agility;
   this.attackLevel = dataDragons[type].attackLevel;
   this.defenseLevel = dataDragons[type].defenseLevel;
   this.hp = dataDragons[type].hp;
   this.strength = dataDragons[type].strength;
   this.type = type;
+  this.addMessage = message;
 };
 
 Dragon.prototype.attack = function(player) {
@@ -16,9 +17,9 @@ Dragon.prototype.attack = function(player) {
 
   // Est-ce que le joueur va réussir à éviter le coup ?
   if (player.tryHit(this) == false) {
-    $(
-      document,
-    ).trigger('message:add', "Le dragon n'a pas réussi à vous toucher !");
+    this.addMessage({
+      text: "Le dragon n'a pas réussi à vous toucher !"
+    });
 
     return;
   }
@@ -38,9 +39,10 @@ Dragon.prototype.attack = function(player) {
   // Diminution des points de vie du joueur.
   player.takeHp(damagePoints);
 
-  $(
-    document,
-  ).trigger('message:add', [ 'Le dragon vous inflige ' + damagePoints + ' dégâts !', 'important' ]);
+  this.addMessage({
+    text: 'Le dragon vous inflige ' + damagePoints + ' dégâts !',
+    categorie: 'important'
+  });
 };
 
 Dragon.prototype.getAttackLevel = function() {

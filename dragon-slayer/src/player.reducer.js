@@ -3,7 +3,7 @@ import {
   PSEUDO_CHANGE,
   RADIO_CHANGE,
   INCREASE,
-  DECREASE,
+  DECREASE
 } from './action';
 
 function player(
@@ -12,9 +12,9 @@ function player(
     agility: 10,
     strength: 10,
     difficulty: 'normal',
-    points: 3,
+    points: 3
   },
-  action,
+  action
 ) {
   switch (action.type) {
     case START_GAME:
@@ -27,7 +27,7 @@ function player(
       if (state.points === 0) return state;
       return Object.assign({}, state, {
         [action.payload]: state[action.payload] + 1,
-        points: state.points - 1,
+        points: state.points - 1
       });
     case DECREASE:
       if (state.agility === 0 || state.strength === 0) return state;
@@ -35,7 +35,7 @@ function player(
         [action.payload]: state[action.payload] >= 1
           ? state[action.payload] - 1
           : state[action.payload],
-        points: state.points + 1,
+        points: state.points + 1
       });
     default:
       return state;

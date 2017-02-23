@@ -34,7 +34,7 @@ class GameMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: props,
+      data: props.player,
       difficulty: null,
       dragon: null,
       map: null,
@@ -43,8 +43,7 @@ class GameMap extends Component {
       state: null,
       world: new World()
     };
-
-    this.setup();
+    console.log('coucou from GameMap', props);
   }
   componentDidMount() {
     this.setState({ map: new Map(this.refs.canvas) });
@@ -62,7 +61,6 @@ class GameMap extends Component {
      * .bind(this) permet de faire en sorte que la variable JavaScript this
      * fonctionne correctement dans les gestionnaires d'évènements.
      */
-  setup() {}
 
   refreshLoop() {
     // Affichage de la carte.
@@ -120,44 +118,23 @@ class GameMap extends Component {
     switch (gameState) {
       case GAME_STATE_END: {
         if (this.state.dragon.isDead() === true) {
-          // $(document).trigger('message:add', [
-          //   'Le cadavre du dragon noir fumant gît à vos pieds, ' +
-          //     '<strong>victoire</strong> ! :-)',
-          //   'important'
-          // ]);
-          this.setState({
-            messages: [
-              ...this.state.messages,
-              {
-                text: 'Le cadavre du dragon noir fumant gît à vos pieds, ' +
-                  '<strong>victoire</strong> ! :-)',
-                categorie: 'important'
-              }
-            ]
+          this.props.addMessage({
+            text: 'Le cadavre du dragon noir fumant gît à vos pieds, ' +
+              '<strong>victoire</strong> ! :-)',
+            categorie: 'important'
           });
         } else {
-          // if(this.state.player.isDead() ==== true)
-          $(document).trigger('message:add', [
-            'Vous avez été <strong>carbonisé</strong> par le dragon, ' +
+          this.props.addMessage({
+            text: 'Vous avez été <strong>carbonisé</strong> par le dragon, ' +
               'pas de chance :-(',
-            'important'
-          ]);
-          this.setState({
-            messages: [
-              ...this.state.messages,
-              {
-                text: 'Vous avez été <strong>carbonisé</strong> par le dragon, ' +
-                  'pas de chance :-(',
-                categorie: 'important'
-              }
-            ]
+            categorie: 'important'
           });
         }
 
-        $(document).trigger('message:add', [
-          '<a href="index.html">Cliquez sur le titre</a> pour relancer le jeu !',
-          'info'
-        ]);
+        this.props.addMessage({
+          text: '<a href="index.html">Cliquez sur le titre</a> pour relancer le jeu !',
+          categorie: 'info'
+        });
 
         break;
       }
@@ -168,6 +145,11 @@ class GameMap extends Component {
             '(<strong>touche F</strong>) !',
           'important'
         ]);
+        this.props.addMessage({
+          text: "Vous avez découvert la grotte d'un dragon, le combat s'engage " +
+            '(<strong>touche F</strong>) !',
+          categorie: 'important'
+        });
 
         /*
              * Installation d'un gestionnaire d'évènement sur l'appui d'une touche.
@@ -175,27 +157,17 @@ class GameMap extends Component {
              * .bind(this) permet de faire en sorte que la variable JavaScript this
              * fonctionne correctement dans les gestionnaires d'évènements.
              */
-        $(document).on('keydown', this.onKeyDownGameFight.bind(this));
+        window.addEventListener('keydown', this.onKeyDownGameFight.bind(this));
 
         break;
       }
 
       case GAME_STATE_PLAY:
       case GAME_STATE_PLAY_START: {
-        $(document).trigger('message:add', [
-          'Trouvez et détruisez le <strong>DRAGON NOIR</strong> pour gagner ' +
+        this.props.addMessage({
+          text: 'Trouvez et détruisez le <strong>DRAGON NOIR</strong> pour gagner ' +
             'la partie&nbsp;!',
-          'info'
-        ]);
-        this.setState({
-          messages: [
-            ...this.state.messages,
-            {
-              text: 'Trouvez et détruisez le <strong>DRAGON NOIR</strong> pour gagner ' +
-                'la partie&nbsp;!',
-              categorie: 'info'
-            }
-          ]
+          categorie: 'info'
         });
 
         /*
@@ -207,20 +179,9 @@ class GameMap extends Component {
         $(document).on('keydown', this.onKeyDownGamePlay.bind(this));
 
         if (gameState === GAME_STATE_PLAY_START) {
-          // $(document).trigger('message:add', [
-          //   'Bienvenu(e) <em>' + this.state.player.nickName + '</em> ;-)',
-          //   'info'
-          // ]);
-          this.setState({
-            messages: [
-              ...this.state.messages,
-              {
-                text: 'Bienvenu(e) <em>' +
-                  this.state.player.nickName +
-                  '</em> ;-)',
-                categorie: 'info'
-              }
-            ]
+          this.props.addMessage({
+            text: 'Bienvenu(e) <em>' + this.state.player.nickName + '</em> ;-)',
+            categorie: 'info'
           });
 
           // Affichage initial du jeu.
@@ -239,7 +200,8 @@ class GameMap extends Component {
     this.state.player = new Player(
       menuData.pseudo,
       menuData.agility,
-      menuData.strength
+      menuData.strength,
+      this.props.addMessage
     );
 
     // Placement du joueur sur la carte du monde.
@@ -284,20 +246,10 @@ class GameMap extends Component {
         // Le joueur a gagné la partie !
         $(document).trigger('game:change-state', GAME_STATE_END);
       } else {
-        $(document).trigger('message:add', [
-          "Le dragon est mort, mais ce n'est pas un dragon noir, " +
+        this.props.addMessage({
+          text: "Le dragon est mort, mais ce n'est pas un dragon noir, " +
             '<strong>continuez</strong> ! :-)',
-          'important'
-        ]);
-        this.setState({
-          messages: [
-            ...this.state.messages,
-            {
-              text: "Le dragon est mort, mais ce n'est pas un dragon noir, " +
-                '<strong>continuez</strong> ! :-)',
-              categorie: 'important'
-            }
-          ]
+          categorie: 'important'
         });
 
         // Il n'y a plus de dragon à gérer.
@@ -364,15 +316,24 @@ class GameMap extends Component {
           switch (dataWorldEvents[index].what) {
             case 'dragon-1':
               if (this.state.difficulty === LEVEL_EASY) {
-                this.state.dragon = new Dragon(DRAGON_TYPE_GREEN);
+                this.state.dragon = new Dragon(
+                  DRAGON_TYPE_GREEN,
+                  this.props.addMessage
+                );
               } else {
-                this.state.dragon = new Dragon(DRAGON_TYPE_RED);
+                this.state.dragon = new Dragon(
+                  DRAGON_TYPE_RED,
+                  this.props.addMessage
+                );
               }
               $(document).trigger('game:change-state', GAME_STATE_FIGHT);
               break;
 
             case 'dragon-2':
-              this.state.dragon = new Dragon(DRAGON_TYPE_BLACK);
+              this.state.dragon = new Dragon(
+                DRAGON_TYPE_BLACK,
+                this.props.addMessage
+              );
               $(document).trigger('game:change-state', GAME_STATE_FIGHT);
               break;
 
@@ -404,7 +365,7 @@ class GameMap extends Component {
           <canvas ref="canvas" width={640} height={480} />
           <StatusBar player={this.state.player} dragon={this.state.dragon} />
         </section>
-        <MessagePanel messages={this.state.messages} />
+        <MessagePanel />
       </main>
     );
   }

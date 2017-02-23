@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as dataGame from '../dragon-slayer-data';
 import link from '../images/link.png';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-const Player = function(nickName, agility, strength) {
+const Player = function(nickName, agility, strength, message) {
   // Est-ce que le joueur a saisi un pseudo ?
   if (nickName.length === 0) {
     // Non, utilisation d'un pseudo par défaut.
@@ -17,6 +17,7 @@ const Player = function(nickName, agility, strength) {
   this.attackLevel = 1;
   // Niveau d'attaque minimum
   this.defenseLevel = 1;
+  this.addMessage = message;
   // Niveau de défense minimum
   this.entity = new Entity(link, 32, 12);
   this.hp = getRandomInteger(200, 250);
@@ -30,10 +31,9 @@ Player.prototype.attack = function(dragon) {
 
   // Est-ce que le dragon va réussir à éviter le coup ?
   if (dragon.tryHit(this) == false) {
-    $(document).trigger(
-      'message:add',
-      'Vous avez raté votre coup contre le dragon !'
-    );
+    this.addMessage({
+      text: 'Vous avez raté votre coup contre le dragon !'
+    });
 
     return;
   }
@@ -52,11 +52,10 @@ Player.prototype.attack = function(dragon) {
 
   // Diminution des points de vie du dragon.
   dragon.takeHp(damagePoints);
-
-  $(document).trigger('message:add', [
-    'Vous avez infligé ' + damagePoints + ' dégâts au dragon !',
-    'important'
-  ]);
+  this.addMessage({
+    text: 'Vous avez infligé ' + damagePoints + ' dégâts au dragon !',
+    categorie: 'important'
+  });
 };
 
 Player.prototype.getAttackLevel = function() {
@@ -85,10 +84,10 @@ Player.prototype.giveTreasure = function(type, difficulty) {
         break;
     }
 
-    $(document).trigger('message:add', [
-      "Vous avez trouvé l'" + this.armor + ' !',
-      'important'
-    ]);
+    this.addMessage({
+      text: "Vous avez trouvé l'" + this.armor + ' !',
+      categorie: 'important'
+    });
   } else if (type == dataGame.TREASURE_TYPE_SWORD) {
     this.sword = dataGame.dataTreasures[difficulty].sword;
 
@@ -106,10 +105,10 @@ Player.prototype.giveTreasure = function(type, difficulty) {
         break;
     }
 
-    $(document).trigger('message:add', [
-      "Vous avez trouvé l'" + this.sword + ' !',
-      'important'
-    ]);
+    this.addMessage({
+      text: "Vous avez trouvé l'" + this.sword + ' !',
+      categorie: 'important'
+    });
   }
 };
 
@@ -134,8 +133,10 @@ Player.prototype.tryHit = function(dragon) {
 
 Player.prototype.tryMove = function(direction, world) {
   // Est-ce que le joueur peut se déplacer dans la direction spécifiée ?
-  if (this.entity.tryMove(direction, world) == true) {
+  console.log('tryMove', direction, world);
+  if (this.entity.tryMove(direction, world) === true) {
     // Oui, déplacement (scrolling) de la carte du monde si besoin.
+    console.log('tryMove scrolling', direction, world);
     world.scroll(direction);
   }
 };

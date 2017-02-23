@@ -1,9 +1,11 @@
-////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
 import $ from 'jquery';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-const MessagePanel = props => {
-  const Messages = props.messages.map((message, index) => (
+const mapStateToProps = state => ({ messages: state.messages });
+
+const Message = ({ messages }) => {
+  const Messages = messages.map((message, index) => (
     <li
       key={index}
       className={
@@ -22,4 +24,6 @@ const MessagePanel = props => {
     </aside>
   );
 };
+
+const MessagePanel = connect(mapStateToProps)(Message);
 export default MessagePanel;

@@ -25,7 +25,6 @@ Entity.prototype.refresh = function(canvasContext, world) {
   x = this.x - world.offsetX;
   // Coordonnée X relative au monde
   y = this.y - world.offsetY;
-  console.log('sprite', this.sprite);
   // Coordonnée Y relative au monde
   /*
      * API Canvas, drawImage()
@@ -63,7 +62,6 @@ Entity.prototype.tryMove = function(direction, world) {
   // Copie des coordonnées de l'entité dans des variables intermédiaires.
   x = this.x;
   y = this.y;
-
   // Mise à jour des variables intermédiaires en fonction de la direction spécifiée.
   switch (direction) {
     case DIRECTION_EAST:

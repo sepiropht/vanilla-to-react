@@ -16,7 +16,6 @@ const Map = function(domContext) {
 
   // Recherche de l'objet JavaScript natif représentant la balise <canvas>.
   canvas = domContext;
-  console.log(domContext);
   // Récupération du contexte 2D du canvas.
   this.canvasContext = canvas.getContext('2d');
 
@@ -36,11 +35,9 @@ Map.prototype.refresh = function(world) {
   var tile;
   var x = 0;
   var y = 0;
-  console.log('passed ici');
   for (y = 0; y < 30; y++) {
     for (x = 0; x < 40; x++) {
       // Récupération du petit carreau aux coordonnées (x, y).
-      console.log('coord', x, y);
       tile = world.getTileAt(x, y);
 
       /*

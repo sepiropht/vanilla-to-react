@@ -4,9 +4,11 @@ import { Router, Route, Link, hashHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import './App.css';
 import { createStore } from 'redux';
-import player from './reducers';
+import player from './player.reducer';
+import messages from './reducers/messages.reducer';
 import Menu from './interface/Menu.class';
-
+import { combineReducers } from 'redux';
+import devToolsEnhancer from 'remote-redux-devtools';
 const Home = props => (
   <div>
     <header>
@@ -19,11 +21,11 @@ const Home = props => (
     {props.children}
   </div>
 );
-
-let store = createStore(
+const app = combineReducers({
   player,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-);
+  messages
+});
+let store = createStore(app, devToolsEnhancer());
 const App = () => (
   <Provider store={store}>
     <Router history={hashHistory}>
