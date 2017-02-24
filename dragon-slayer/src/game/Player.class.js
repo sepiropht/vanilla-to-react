@@ -4,7 +4,7 @@ import $ from 'jquery';
 import * as dataGame from '../dragon-slayer-data';
 import link from '../images/link.png';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-const Player = function(nickName, agility, strength, message) {
+const Player = function(nickName, agility, strength, message, updateStatus) {
   // Est-ce que le joueur a saisi un pseudo ?
   if (nickName.length === 0) {
     // Non, utilisation d'un pseudo par défaut.
@@ -24,6 +24,8 @@ const Player = function(nickName, agility, strength, message) {
   this.nickName = nickName.toLowerCase();
   this.strength = strength;
   this.sword = null; // Au début le joueur n'a pas d'épée
+  this.updateStatus = updateStatus;
+  this.updateStatus({ player: this.hp });
 };
 
 Player.prototype.attack = function(dragon) {
@@ -48,6 +50,7 @@ Player.prototype.attack = function(dragon) {
          * seulement une erraflure, soit 5 points de vie en moins.
          */
     damagePoints = 5;
+    this.updateStatus({ dragon: 5 });
   }
 
   // Diminution des points de vie du dragon.
@@ -83,7 +86,9 @@ Player.prototype.giveTreasure = function(type, difficulty) {
         this.defenseLevel = 12;
         break;
     }
-
+    this.updateStatus({
+      armor: this.armor
+    });
     this.addMessage({
       text: "Vous avez trouvé l'" + this.armor + ' !',
       categorie: 'important'
@@ -104,7 +109,7 @@ Player.prototype.giveTreasure = function(type, difficulty) {
         this.attackLevel = 12;
         break;
     }
-
+    this.updateStatus({ sword: this.sword });
     this.addMessage({
       text: "Vous avez trouvé l'" + this.sword + ' !',
       categorie: 'important'
@@ -127,16 +132,15 @@ Player.prototype.tryHit = function(dragon) {
   // Calcul aléatoire de la chance du dragon et du joueur.
   dragonLuck = rollDice() * 2;
   playerLuck = rollDice();
-
   return dragon.agility + dragonLuck >= this.agility + playerLuck;
 };
 
 Player.prototype.tryMove = function(direction, world) {
   // Est-ce que le joueur peut se déplacer dans la direction spécifiée ?
-  console.log('tryMove', direction, world);
+
   if (this.entity.tryMove(direction, world) === true) {
     // Oui, déplacement (scrolling) de la carte du monde si besoin.
-    console.log('tryMove scrolling', direction, world);
+
     world.scroll(direction);
   }
 };

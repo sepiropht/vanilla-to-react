@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import './App.css';
 import { createStore } from 'redux';
 import player from './player.reducer';
+import status from './reducers/status.reducer';
 import messages from './reducers/messages.reducer';
 import Menu from './interface/Menu.class';
 import { combineReducers } from 'redux';
@@ -23,7 +24,8 @@ const Home = props => (
 );
 const app = combineReducers({
   player,
-  messages
+  messages,
+  status
 });
 let store = createStore(app, devToolsEnhancer());
 const App = () => (

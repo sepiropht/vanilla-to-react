@@ -2,14 +2,16 @@ import { rollDice } from '../library/utilities';
 import { dataDragons } from '../dragon-slayer-data';
 import $ from 'jquery';
 ////////////////////// CONSTRUCTEUR ET METHODES DE LA CLASSE //////////////////////
-const Dragon = function(type, message) {
+const Dragon = function(type, message, updateStatus) {
   this.agility = dataDragons[type].agility;
   this.attackLevel = dataDragons[type].attackLevel;
   this.defenseLevel = dataDragons[type].defenseLevel;
   this.hp = dataDragons[type].hp;
   this.strength = dataDragons[type].strength;
+  this.updateStatus = updateStatus;
   this.type = type;
   this.addMessage = message;
+  this.updateStatus({ dragon: this.hp });
 };
 
 Dragon.prototype.attack = function(player) {

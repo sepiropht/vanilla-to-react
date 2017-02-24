@@ -201,7 +201,8 @@ class GameMap extends Component {
       menuData.pseudo,
       menuData.agility,
       menuData.strength,
-      this.props.addMessage
+      this.props.addMessage,
+      this.props.updateStatus
     );
 
     // Placement du joueur sur la carte du monde.
@@ -318,12 +319,14 @@ class GameMap extends Component {
               if (this.state.difficulty === LEVEL_EASY) {
                 this.state.dragon = new Dragon(
                   DRAGON_TYPE_GREEN,
-                  this.props.addMessage
+                  this.props.addMessage,
+                  this.props.updateStatus
                 );
               } else {
                 this.state.dragon = new Dragon(
                   DRAGON_TYPE_RED,
-                  this.props.addMessage
+                  this.props.addMessage,
+                  this.props.updateStatus
                 );
               }
               $(document).trigger('game:change-state', GAME_STATE_FIGHT);
@@ -332,7 +335,8 @@ class GameMap extends Component {
             case 'dragon-2':
               this.state.dragon = new Dragon(
                 DRAGON_TYPE_BLACK,
-                this.props.addMessage
+                this.props.addMessage,
+                this.props.updateStatus
               );
               $(document).trigger('game:change-state', GAME_STATE_FIGHT);
               break;

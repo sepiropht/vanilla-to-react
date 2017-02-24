@@ -29,13 +29,9 @@ World.prototype.getTileAt = function(x, y) {
 };
 
 World.prototype.scroll = function(direction) {
-  console.log('world scroll', direction);
-  console.log(dataGame.DIRECTION_EAST);
-  debugger;
   switch (direction) {
     case dataGame.DIRECTION_EAST:
       if (this.offsetX < dataGame.WORLD_WIDTH - dataGame.MAP_WIDTH) {
-        console.log('DIRECTION_EAST', dataGame.DIRECTION_EAST);
         // Décalage vers la droite de la carte du monde.
         this.offsetX++;
       }
