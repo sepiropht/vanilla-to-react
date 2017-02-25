@@ -5,7 +5,9 @@ import { connect } from 'react-redux';
 const mapStateToProps = state => ({ messages: state.messages });
 
 const Message = ({ messages }) => {
-  const Messages = messages.map((message, index) => (
+  let mess = messages;
+  if (messages.length > 31) mess = messages.filter((m, index) => index > 10);
+  const Messages = mess.map((message, index) => (
     <li
       key={index}
       className={

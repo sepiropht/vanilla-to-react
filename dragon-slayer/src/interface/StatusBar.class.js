@@ -2,7 +2,7 @@ import $ from 'jquery';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-const mapStateToProps = state => ({ messages: state.status });
+const mapStateToProps = state => ({ status: state.status });
 
 const Status = ({ status }) => {
   return (
