@@ -1,0 +1,10 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "dragon-slayer/package.json",
+        "game-one-react/package.json"
+      ]
+    }
+  }
+}
